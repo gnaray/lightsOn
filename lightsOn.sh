@@ -36,6 +36,7 @@ vlc_detection=1
 firefox_flash_detection=1
 chromium_flash_detection=1
 minitube_detection=1
+kodi_detection=1
 
 # Names of programs which, when running, you wish to delay the screensaver.
 delay_progs=() # For example ('ardour2' 'gmpc')
@@ -183,6 +184,19 @@ isAppRunning()
             fi
         fi
     fi
+
+    if [ $kodi_detection == 1 ];then
+        if [[ "$activ_win_title" = *kodi* ]];then
+            #check if kodi is running.
+            #kodi_process=`pgrep -l kodi | grep -wc kodi`
+            kodi_process=`pgrep -lc kodi`
+            if [ $kodi_process -ge 1 ]; then
+                return 1
+            fi
+        fi
+    fi
+
+
 
 return 0
 }
