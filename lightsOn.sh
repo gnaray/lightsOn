@@ -53,18 +53,20 @@ do
 done < <(xvinfo | sed -n 's/^screen #\([0-9]\+\)$/\1/p')
 
 
-# Detect screensaver been used (xscreensaver, kscreensaver or none)
-screensaver=`pgrep -l xscreensaver | grep -wc xscreensaver`
-if [ $screensaver -ge 1 ]; then
-    screensaver=xscreensaver
-else
-    screensaver=`pgrep -l kscreensaver | grep -wc kscreensaver`
-    if [ $screensaver -ge 1 ]; then
-        screensaver=kscreensaver
-    else
-        screensaver=None
-        echo "No screensaver detected"
+# Detect screensaver been used (see the list) else none.
+search_screensavers=("xscreensaver" "kscreensaver" "xfce4-screensaver")
+for search_screensaver in ${search_screensavers[@]}; do
+    # pgrep is limited to match at most 15 characters due to /proc/PID/stat unless
+    # f (full) option is used but then anything in command line could match.
+    search_screensaver_pgrep="${search_screensaver:0:15}"
+    if [[ `pgrep -lc "${search_screensaver_pgrep}"` -ge 1 ]]; then
+        screensaver="${search_screensaver}"
+        break
     fi
+done
+if [[ -z $screensaver ]]; then
+    screensaver="None"
+    echo "No screensaver detected"
 fi
 
 checkDelayProgs()
