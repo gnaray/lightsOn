@@ -45,6 +45,57 @@ delay_progs=() # For example ('ardour2' 'gmpc')
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW THIS LINE
 
 
+# It requires: $1 the process name.
+# It provides: nothing.
+# Prints: nothing.
+# Returns 0 if the process of process name is found else 1.
+findProcess()
+{
+    # pgrep is limited to match at most 15 characters due to /proc/PID/stat unless
+    # f (full) option is used but then anything in command line could match.
+    search_process_pgrep="${1:0:15}"
+    if [[ `pgrep -lc "${search_process_pgrep}"` -ge 1 ]]; then
+        return 0
+    fi
+    return 1
+}
+
+
+# It requires: $1 the process names array.
+# It provides: nothing.
+# Prints: the process name.
+# Returns 0 if the process of a process name in process names array is found else 1.
+findAnyProcessOfProcessNames()
+{
+    for process_name in "${@}"; do
+        if findProcess ${process_name}; then
+            echo "${process_name}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+
+# It requires: nothing.
+# It provides: nothing.
+# Prints: the name of screensaver of which process is found or "None" if not found.
+# Returns 0 if the process of a process name in process names array is found else 1.
+findAnyScreensaverProcess()
+{
+    # Detect screensaver being used (see the list) else None.
+    local screensaver_names=("xscreensaver" "kscreensaver" "xfce4-screensaver")
+    local screensaver=$(findAnyProcessOfProcessNames "${screensaver_names[@]}")
+    local screensaver_ret=${?}
+    if [[ -z "${screensaver}" ]]; then
+        echo "None"
+        return 1
+    fi
+    echo "${screensaver}"
+    return 0
+}
+
+
 # enumerate all the attached screens
 displays=""
 while read id
@@ -52,20 +103,9 @@ do
     displays="$displays $id"
 done < <(xvinfo | sed -n 's/^screen #\([0-9]\+\)$/\1/p')
 
-
-# Detect screensaver been used (see the list) else none.
-search_screensavers=("xscreensaver" "kscreensaver" "xfce4-screensaver")
-for search_screensaver in ${search_screensavers[@]}; do
-    # pgrep is limited to match at most 15 characters due to /proc/PID/stat unless
-    # f (full) option is used but then anything in command line could match.
-    search_screensaver_pgrep="${search_screensaver:0:15}"
-    if [[ `pgrep -lc "${search_screensaver_pgrep}"` -ge 1 ]]; then
-        screensaver="${search_screensaver}"
-        break
-    fi
-done
-if [[ -z $screensaver ]]; then
-    screensaver="None"
+screensaver=$(findAnyScreensaverProcess)
+screensaver_ret=${?}
+if [[ "${screensaver_ret}" -eq 1 ]]; then
     echo "No screensaver detected"
 fi
 
