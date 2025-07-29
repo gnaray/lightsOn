@@ -249,13 +249,20 @@ return 0
 
 delayScreensaver()
 {
-
     # reset inactivity time counter so screensaver is not started
-    if [ "$screensaver" == "xscreensaver" ]; then
-        xscreensaver-command -deactivate > /dev/null
-    elif [ "$screensaver" == "kscreensaver" ]; then
-        qdbus org.freedesktop.ScreenSaver /ScreenSaver SimulateUserActivity > /dev/null
-    fi
+    case "${screensaver}" in
+        "xscreensaver" | "xfce4-screensaver")
+            ${screensaver}-command -deactivate > /dev/null
+        ;;
+        "kscreensaver")
+            qdbus org.freedesktop.ScreenSaver /ScreenSaver SimulateUserActivity > /dev/null
+        ;;
+        "None")
+        ;;
+        *)
+            echo "Unsupported screensaver: ${screensaver}"
+        ;;
+    esac
 
 
     #Check if DPMS is on. If it is, deactivate and reactivate again. If it is not, do nothing.
@@ -264,7 +271,6 @@ delayScreensaver()
         xset -dpms
         xset dpms
     fi
-
 }
 
 
