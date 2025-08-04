@@ -137,16 +137,16 @@ checkFullscreen()
         # Skip invalid window ids (commented as I could not reproduce a case
         # where invalid id was returned, plus if id invalid
         # isActivWinFullscreen will fail anyway.)
-        #if [ "$activ_win_id" = "0x0" ]; then
+        #if [ "$activ_win_id" == "0x0" ]; then
         #     continue
         #fi
 
         # Check if Active Window (the foremost window) is in fullscreen state
         isActivWinFullscreen=`DISPLAY=:0.${display} xprop -id $activ_win_id | grep _NET_WM_STATE_FULLSCREEN`
-            if [[ "$isActivWinFullscreen" = *NET_WM_STATE_FULLSCREEN* ]];then
                 isAppRunning ${activ_win_id}
                 var=$?
                 if [[ $var -eq 1 ]];then
+            if [[ "$isActivWinFullscreen" == *NET_WM_STATE_FULLSCREEN* ]];then
                     delayScreensaver
                 fi
             fi
@@ -171,7 +171,7 @@ isAppRunning()
 
     # Check if user want to detect Video fullscreen on Firefox, modify variable firefox_flash_detection if you dont want Firefox detection
     if [ $firefox_flash_detection == 1 ];then
-        if [[ "$activ_win_title" = *unknown* || "$activ_win_title" = *plugin-container* ]];then
+        if [[ "$activ_win_title" == *unknown* || "$activ_win_title" == *plugin-container* ]];then
         # Check if plugin-container process is running
             flash_process=`pgrep -l plugin-containe | grep -wc plugin-containe`
             #(why was I using this line avobe? delete if pgrep -lc works ok)
@@ -185,7 +185,7 @@ isAppRunning()
 
     # Check if user want to detect Video fullscreen on Chromium, modify variable chromium_flash_detection if you dont want Chromium detection
     if [ $chromium_flash_detection == 1 ];then
-        if [[ "$activ_win_title" = *exe* ]];then
+        if [[ "$activ_win_title" == *exe* ]];then
         # Check if Chromium/Chrome Flash process is running
             flash_process=`pgrep -lfc ".*((c|C)hrome|chromium).*flashp.*"`
             if [[ $flash_process -ge 1 ]];then
@@ -197,7 +197,7 @@ isAppRunning()
 
     #check if user want to detect mplayer fullscreen, modify variable mplayer_detection
     if [ $mplayer_detection == 1 ];then
-        if [[ "$activ_win_title" = *mplayer* || "$activ_win_title" = *MPlayer* ]];then
+        if [[ "$activ_win_title" == *mplayer* || "$activ_win_title" == *MPlayer* ]];then
             #check if mplayer is running.
             #mplayer_process=`pgrep -l mplayer | grep -wc mplayer`
             mplayer_process=`pgrep -lc mplayer`
@@ -210,7 +210,7 @@ isAppRunning()
 
     # Check if user want to detect vlc fullscreen, modify variable vlc_detection
     if [ $vlc_detection == 1 ];then
-        if [[ "$activ_win_title" = *vlc* ]];then
+        if [[ "$activ_win_title" == *vlc* ]];then
             #check if vlc is running.
             #vlc_process=`pgrep -l vlc | grep -wc vlc`
             vlc_process=`pgrep -lc vlc`
@@ -222,7 +222,7 @@ isAppRunning()
 
     # Check if user want to detect minitube fullscreen, modify variable minitube_detection
     if [ $minitube_detection == 1 ];then
-        if [[ "$activ_win_title" = *minitube* ]];then
+        if [[ "$activ_win_title" == *minitube* ]];then
             #check if minitube is running.
             #minitube_process=`pgrep -l minitube | grep -wc minitube`
             minitube_process=`pgrep -lc minitube`
@@ -233,7 +233,7 @@ isAppRunning()
     fi
 
     if [ $kodi_detection == 1 ];then
-        if [[ "$activ_win_title" = *kodi* ]];then
+        if [[ "$activ_win_title" == *kodi* ]];then
             #check if kodi is running.
             #kodi_process=`pgrep -l kodi | grep -wc kodi`
             kodi_process=`pgrep -lc kodi`
@@ -287,7 +287,7 @@ fi
 
 
 # If argument is not integer quit.
-if [[ $1 = *[^0-9]* ]]; then
+if [[ $1 == *[^0-9]* ]]; then
     echo "The Argument \"$1\" is not valid, not an integer"
     echo "Please use the time in seconds you want the checks to repeat."
     echo "You want it to be ~10 seconds less than the time it takes your screensaver or DPMS to activate"
