@@ -112,10 +112,7 @@ fi
 checkDelayProgs()
 {
     for prog in "${delay_progs[@]}"; do
-        # pgrep is limited to match at most 15 characters due to /proc/PID/stat unless
-        # f (full) option is used but then anything in command line could match.
-        prog_pgrep="${prog:0:15}"
-        if [[ `pgrep -lc "${prog_pgrep}"` -ge 1 ]]; then
+        if findProcess ${prog}; then
             echo "Delaying the screensaver because a program on the delay list, \"${prog}\", is running..."
             delayScreensaver
             break
