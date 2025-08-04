@@ -48,7 +48,7 @@ delay_progs=() # For example ('ardour2' 'gmpc')
 # It requires: $1 the process name.
 # It provides: nothing.
 # Prints: nothing.
-# Returns 0 if the process of process name is found else 1.
+# Returns: 0 if the process of process name is found else 1.
 findProcess()
 {
     # pgrep is limited to match at most 15 characters due to /proc/PID/stat unless
@@ -105,6 +105,10 @@ else
     echo "\"${screensaver}\" screensaver detected"
 fi
 
+# It requires: $screensaver the name of running screensaver, $delay_progs the names of delayer programs.
+# It provides: nothing.
+# Prints: possible log message.
+# Returns: 0 if a delayer program is found and the delaying succeeded else 1.
 checkDelayProgs()
 {
     for prog in "${delay_progs[@]}"; do
@@ -116,6 +120,10 @@ checkDelayProgs()
     done
 }
 
+# It requires: $screensaver the name of running screensaver, $displays the found displays, $*_detection the configured variables.
+# It provides: nothing.
+# Prints: possible log message.
+# Returns: 0 if the active windows is full screen and the delaying succeeded else 1.
 checkFullscreen()
 {
     # loop through every display looking for a fullscreen window
