@@ -54,7 +54,7 @@ findProcess()
     # pgrep is limited to match at most 15 characters due to /proc/PID/stat unless
     # f (full) option is used but then anything in command line could match.
     local search_process_pgrep="${1:0:15}"
-    [ `pgrep -lc "${search_process_pgrep}"` -ge 1 ] && return 0 || return 1;
+    if (( $(pgrep -lc "${search_process_pgrep}") >= 1 )); then return 0; else return 1; fi
 }
 
 
@@ -257,7 +257,7 @@ delayScreensaver()
 
     #Check if DPMS is on. If it is, deactivate and reactivate again. If it is not, do nothing.
     dpmsStatus=`xset -q | grep -ce 'DPMS is Enabled'`
-    if [ $dpmsStatus == 1 ];then
+    if (( $dpmsStatus == 1 )); then
         xset -dpms
         xset dpms
     fi
