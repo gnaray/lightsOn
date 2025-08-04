@@ -262,6 +262,7 @@ delayScreensaver()
         ;;
         *)
             echo "Unsupported screensaver: ${screensaver}"
+            return 1
         ;;
     esac
 
