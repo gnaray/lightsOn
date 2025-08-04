@@ -142,14 +142,13 @@ checkFullscreen()
         #fi
 
         # Check if Active Window (the foremost window) is in fullscreen state
-        isActivWinFullscreen=`DISPLAY=:0.${display} xprop -id $activ_win_id | grep _NET_WM_STATE_FULLSCREEN`
-                isAppRunning ${activ_win_id}
-                var=$?
-                if [[ $var -eq 1 ]];then
-            if [[ "$isActivWinFullscreen" == *NET_WM_STATE_FULLSCREEN* ]];then
-                    delayScreensaver
-                fi
+        local isActivWinFullscreen=`DISPLAY=:0.${display} xprop -id $activ_win_id | grep _NET_WM_STATE_FULLSCREEN`
+        if [[ "$isActivWinFullscreen" == *NET_WM_STATE_FULLSCREEN* ]];then
+            isAppRunning ${activ_win_id}; isAppRunning_retcode=${?}
+            if (( ${isAppRunning_retcode} != 0 )); then
+                delayScreensaver
             fi
+        fi
     done
 }
 
