@@ -58,34 +58,36 @@ findProcess()
 }
 
 
-# It requires: $1 the process names array.
+# It requires: $1 the variable of returned process name, $2, $3, ... the process names.
 # It provides: nothing.
-# Prints: the process name.
-# Returns 0 if the process of a process name in process names array is found else 1.
+# Prints: nothing.
+# Returns: 0 if the process of a process name in process name args is found else 1.
+# Example: findAnyProcessOfProcessNames returnedName "name1" "name2" "name3"
 findAnyProcessOfProcessNames()
 {
-    for process_name in "${@}"; do
-        if findProcess ${process_name}; then
-            echo "${process_name}"
-            return 0
+    local -n processNameRef=${1}
+    for process_name in "${@:2}"; do
+        findProcess "${process_name}"; local findProcess_retcode=${?}
+        if (( "${findProcess_retcode}" == 0 )); then
+            processNameRef="${process_name}"
+            return ${findProcess_retcode}
         fi
     done
-    return 1
+    processNameRef=""
+    return ${findProcess_retcode}
 }
 
 
-# It requires: nothing.
+# It requires: $1 the variable of returned screensaver name.
 # It provides: nothing.
-# Prints: the name of screensaver of which process is found or "None" if not found.
-# Returns 0 if the process of a process name in process names array is found else 1.
+# Prints: nothing.
+# Returns: 0 if the process of a screensaver name is found else 1.
 findAnyScreensaverProcess()
 {
     # Detect screensaver being used (see the list) else None.
     local screensaver_names=("xscreensaver" "kscreensaver" "xfce4-screensaver")
-    local screensaver=$(findAnyProcessOfProcessNames "${screensaver_names[@]}")
-    local screensaver_ret=${?}
-    echo "${screensaver}"
-    return "${screensaver_ret}"
+    local -n screensaverRef=${1}
+    findAnyProcessOfProcessNames screensaverRef "${screensaver_names[@]}"
 }
 
 
@@ -96,10 +98,11 @@ do
     displays="$displays $id"
 done < <(xvinfo | sed -n 's/^screen #\([0-9]\+\)$/\1/p')
 
-screensaver=$(findAnyScreensaverProcess)
-screensaver_ret=${?}
-if [[ "${screensaver_ret}" -eq 1 ]]; then
+findAnyScreensaverProcess screensaver; findAnyScreensaverProcess_retcode=${?}
+if (( "${findAnyScreensaverProcess_retcode}" != 0 )); then
     echo "No screensaver detected"
+else
+    echo "\"${screensaver}\" screensaver detected"
 fi
 
 checkDelayProgs()
