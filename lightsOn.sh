@@ -95,7 +95,7 @@ findAnyScreensaverProcess()
 displays=""
 while read id
 do
-    displays="$displays $id"
+    displays="${displays} ${id}"
 done < <(xvinfo | sed -n 's/^screen #\([0-9]\+\)$/\1/p')
 
 findAnyScreensaverProcess screensaver; findAnyScreensaverProcess_retcode=${?}
@@ -127,7 +127,7 @@ checkDelayProgs()
 checkFullscreen()
 {
     # loop through every display looking for a fullscreen window
-    for display in $displays
+    for display in ${displays}
     do
         #get id of active window and clean output
         activ_win_id=`DISPLAY=:0.${display} xprop -root _NET_ACTIVE_WINDOW`
