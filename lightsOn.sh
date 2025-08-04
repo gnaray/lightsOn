@@ -130,7 +130,7 @@ checkFullscreen()
     for display in ${displays}
     do
         #get id of active window and clean output
-        activ_win_id=`DISPLAY=:0.${display} xprop -root _NET_ACTIVE_WINDOW`
+        local activ_win_id=`DISPLAY=:0.${display} xprop -root _NET_ACTIVE_WINDOW`
         #activ_win_id=${activ_win_id#*# } #gives error if xprop returns extra ", 0x0" (happens on some distros)
         activ_win_id=${activ_win_id:40:9}
 
@@ -144,7 +144,7 @@ checkFullscreen()
         # Check if Active Window (the foremost window) is in fullscreen state
         isActivWinFullscreen=`DISPLAY=:0.${display} xprop -id $activ_win_id | grep _NET_WM_STATE_FULLSCREEN`
             if [[ "$isActivWinFullscreen" = *NET_WM_STATE_FULLSCREEN* ]];then
-                isAppRunning
+                isAppRunning ${activ_win_id}
                 var=$?
                 if [[ $var -eq 1 ]];then
                     delayScreensaver
@@ -163,6 +163,7 @@ checkFullscreen()
 
 isAppRunning()
 {
+    local activ_win_id=$1
     #Get title of active window
     activ_win_title=`xprop -id $activ_win_id | grep "WM_CLASS(STRING)"`   # I used WM_NAME(STRING) before, WM_CLASS more accurate.
 
