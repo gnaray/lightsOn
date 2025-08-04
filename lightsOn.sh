@@ -115,7 +115,7 @@ checkDelayProgs()
         if findProcess ${prog}; then
             echo "Delaying the screensaver because a program on the delay list, \"${prog}\", is running..."
             delayScreensaver
-            break
+            return
         fi
     done
 }
