@@ -53,11 +53,8 @@ findProcess()
 {
     # pgrep is limited to match at most 15 characters due to /proc/PID/stat unless
     # f (full) option is used but then anything in command line could match.
-    search_process_pgrep="${1:0:15}"
-    if [[ `pgrep -lc "${search_process_pgrep}"` -ge 1 ]]; then
-        return 0
-    fi
-    return 1
+    local search_process_pgrep="${1:0:15}"
+    [ `pgrep -lc "${search_process_pgrep}"` -ge 1 ] && return 0 || return 1;
 }
 
 
