@@ -84,12 +84,8 @@ findAnyScreensaverProcess()
     local screensaver_names=("xscreensaver" "kscreensaver" "xfce4-screensaver")
     local screensaver=$(findAnyProcessOfProcessNames "${screensaver_names[@]}")
     local screensaver_ret=${?}
-    if [[ -z "${screensaver}" ]]; then
-        echo "None"
-        return 1
-    fi
     echo "${screensaver}"
-    return 0
+    return "${screensaver_ret}"
 }
 
 
@@ -251,7 +247,7 @@ delayScreensaver()
         "kscreensaver")
             qdbus org.freedesktop.ScreenSaver /ScreenSaver SimulateUserActivity > /dev/null
         ;;
-        "None")
+        "")
         ;;
         *)
             echo "Unsupported screensaver: ${screensaver}"
