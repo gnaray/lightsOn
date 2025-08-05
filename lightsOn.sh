@@ -56,6 +56,25 @@ function error_msg()
 }
 
 
+# It requires: $1 the name of exe, $2 ... ${n-1} the args of exe, $n the returnvariable willing contain the stdout of exe. The n is the number of arguments.
+# It provides: nothing.
+# Prints: possible log message.
+# Returns: 0 if succeeded else not 0.
+# Example: callExe pgrep -lc screensaver retvar
+callExe()
+{
+    if (( ${#} < 2 )); then
+        error_msg "At least 2 arguments (exename, returnvariable) are required in ${FUNCNAME}, got \"${*}\""
+        return 1
+    fi
+    local -n _retvar=${@:${#}}
+    _retvar=
+    _retvar=$($1 ${@:2:${#}-2}) # -1 for $1 and -1 for retvar.
+    local _retval=${?}
+    return $_retval
+}
+
+
 # It requires: $1 the process name.
 # It provides: nothing.
 # Prints: nothing.
