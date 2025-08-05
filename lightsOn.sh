@@ -45,6 +45,17 @@ delay_progs=() # For example ('ardour2' 'gmpc')
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW THIS LINE
 
 
+# Call this function in current shell only, because designed that way.
+# It requires: $1 the message.
+# It provides: nothing.
+# Prints: the error message.
+# Returns: 0 if succeeded else not 0.
+function error_msg()
+{
+  printf "Error: ${1}\n"
+}
+
+
 # It requires: $1 the process name.
 # It provides: nothing.
 # Prints: nothing.
