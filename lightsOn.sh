@@ -75,49 +75,63 @@ callExe()
 }
 
 
-# It requires: $1 the process name.
+# It requires: $1 the process name, $2 the returnvariable willing contain the number of matched different processes.
 # It provides: nothing.
-# Prints: nothing.
-# Returns: 0 if the process of process name is found else 1.
+# Prints: possible log message.
+# Returns: 0 if succeeded else not 0.
 findProcess()
 {
+    if (( ${#} < 2 )); then
+        error_msg "At least 2 arguments (processname, returnvariable) are required in ${FUNCNAME}, got \"${*}\""
+        return 1
+    fi
     # pgrep is limited to match at most 15 characters due to /proc/PID/stat unless
     # f (full) option is used but then anything in command line could match.
-    local search_process_pgrep="${1:0:15}"
-    if (( $(pgrep -lc "${search_process_pgrep}") >= 1 )); then return 0; else return 1; fi
+    local _search_process_pgrep="${1:0:15}"
+    local -n _numberOfMatchesRef=${2}
+    _numberOfMatchesRef=
+    callExe pgrep -lc "${_search_process_pgrep}" _numberOfMatchesRef
 }
 
 
-# It requires: $1 the variable of returned process name, $2, $3, ... the process names.
+# It requires: $1, $2, ... ${n-1} the process names, $n the returnvariable willing contain the found process name. The n is the number of arguments.
 # It provides: nothing.
-# Prints: nothing.
-# Returns: 0 if the process of a process name in process name args is found else 1.
-# Example: findAnyProcessOfProcessNames returnedName "name1" "name2" "name3"
+# Prints: possible log message.
+# Returns: 0 if succeeded else not 0.
+# Example: findAnyProcessOfProcessNames "name1" "name2" "name3" retvar
 findAnyProcessOfProcessNames()
 {
-    local -n processNameRef=${1}
-    for process_name in "${@:2}"; do
-        findProcess "${process_name}"; local findProcess_retcode=${?}
-        if (( "${findProcess_retcode}" == 0 )); then
-            processNameRef="${process_name}"
-            return ${findProcess_retcode}
+    if (( ${#} < 2 )); then
+        error_msg "At least 2 arguments (processname, returnvariable) are required in ${FUNCNAME}, got \"${*}\""
+        return 1
+    fi
+    local -n _processNameRef=${@:${#}}
+    _processNameRef=
+    for process_name in "${@:1:${#}-1}"; do
+        local _numberOfMatches
+        findProcess "${process_name}" _numberOfMatches; local _findProcess_retcode=${?}
+        if (( "${_findProcess_retcode}" == 0 && ${_numberOfMatches} > 0 )); then
+            _processNameRef="${process_name}"
         fi
     done
-    processNameRef=""
     return ${findProcess_retcode}
 }
 
 
-# It requires: $1 the variable of returned screensaver name.
+# It requires: $1 the returnvariable willing contain the found screensaver name.
 # It provides: nothing.
-# Prints: nothing.
-# Returns: 0 if the process of a screensaver name is found else 1.
+# Prints: possible log message.
+# Returns: 0 if succeeded else not 0.
 findAnyScreensaverProcess()
 {
+    if (( ${#} != 1 )); then
+        error_msg "Exactly 1 arguments (returnvariable) are required in ${FUNCNAME}, got \"${*}\""
+        return 1
+    fi
     # Detect screensaver being used (see the list) else None.
-    local screensaver_names=("xscreensaver" "kscreensaver" "xfce4-screensaver")
-    local -n screensaverRef=${1}
-    findAnyProcessOfProcessNames screensaverRef "${screensaver_names[@]}"
+    local _screensaver_names=("xscreensaver" "kscreensaver" "xfce4-screensaver")
+    local -n _screensaverRef=${1}
+    findAnyProcessOfProcessNames "${_screensaver_names[@]}" _screensaverRef
 }
 
 
