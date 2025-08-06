@@ -3,6 +3,8 @@
 
 # Copyright (c) 2013 iye.cba at gmail com
 # url: https://github.com/iye/lightsOn
+# Copyright (c) 2025 drszamo at gmail com
+# url: https://github.com/gnaray/lightsOn.git
 # This script is licensed under GNU GPL version 2.0 or above
 
 # Description: Bash script that prevents the screensaver and display power
@@ -10,7 +12,7 @@
 # fullscreen on Firefox and Chromium.
 # Can detect mplayer, minitube, and VLC when they are fullscreen too.
 # Also, screensaver can be prevented when certain specified programs are running.
-# lightsOn.sh needs xscreensaver or kscreensaver to work.
+# lightsOn.sh needs any of xscreensaver, kscreensaver, xfce4-screenaver to work.
 
 
 # HOW TO USE: Start the script with the number of seconds you want the checks
