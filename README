@@ -1,1 +1,10 @@
 Read lightsOn.sh. How to use and license there.
+
+tools:
+lightsOn.sh daemon which checks if screensaver should be inhibited.
+
+this program is based on:
+https://github.com/iye/lightsOn
+
+Credits for some fixes:
+https://bbs.archlinux.org/viewtopic.php?id=130447
